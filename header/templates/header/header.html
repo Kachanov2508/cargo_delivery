@@ -1,0 +1,56 @@
+<div class="container mt-3">
+    <div class="row header">
+
+        <div class="col-md-4 header__logo">
+            {% for item in context %}
+                <img src="{{ item.logo.url }}" alt="logo">
+            {% endfor %}
+        </div>
+
+        <div class="col-md-4 header__services">
+            <ul>
+                {% for item in context %}
+                    {{ item.services|safe }}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-4 header__contacts">
+            <ul>
+                {% for item in context %}
+                    {{ item.address|safe }}
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+{#<style>#}
+{#    .header {#}
+{#        display: flex;#}
+{#        align-items: center;#}
+{#        margin-top: 20px;#}
+{#    }#}
+{##}
+{#    .header__logo {#}
+{#        margin-right: 50px;#}
+{#    }#}
+{##}
+{#    .header__services {#}
+{#    }#}
+{##}
+{#    .header__services ul {#}
+{#        list-style-type: circle;#}
+{#    }#}
+{##}
+{#    .header__contacts {#}
+{#        flex-grow: 1;#}
+{#        text-align: right;#}
+{#    }#}
+{##}
+{#    .header__contacts ul {#}
+{#        list-style: none;#}
+{#    }#}
+{#</style>#}
+
