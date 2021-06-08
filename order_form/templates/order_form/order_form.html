@@ -57,53 +57,56 @@
     <div class="order_form__left">
         <form method="post">
             {% csrf_token %}
+
             <!-- Откуда -->
-            <div class="form-floating" id="floatingFrom" @click="show_map">
-                <select class="form-select" aria-label="Floating label select example">
-                    <option selected>Подольск</option>
-                    <option value="1">Владимир</option>
-                    <option value="2">Нижний Новгород</option>
-                    <option value="3">Чебоксары</option>
-                    <option value="3">Казань</option>
-                </select>
-                <label for="floatingFrom">Откуда</label>
+            <div class="form-floating mt-3" @click="show_map">
+                <input type="text" class="form-control" id="point_from" placeholder="Имя">
+                <label for="point_from">
+                    <i class="bi bi-geo-alt"></i>
+                    Откуда
+                </label>
             </div>
 
             <!-- Куда -->
-            <div class="form-floating mt-3" id="floatingWhere" @click="show_map">
-                <select class="form-select" aria-label="Floating label select example">
-                    <option selected>Подольск</option>
-                    <option value="1">Владимир</option>
-                    <option value="2">Нижний Новгород</option>
-                    <option value="3">Чебоксары</option>
-                    <option value="3">Казань</option>
-                </select>
-                <label for="floatingWhere">Куда</label>
+            <div class="form-floating mt-3" @click="show_map">
+                <input type="text" class="form-control" id="point_to" placeholder="Имя">
+                <label for="point_to">
+                    <i class="bi bi-geo-alt"></i>
+                    Куда
+                </label>
             </div>
 
             <!-- Имя -->
             <div class="form-floating mt-3" @click="show_map">
                 <input type="text" class="form-control" id="floatingName" placeholder="Имя">
-                <label for="floatingName">Имя</label>
+                <label for="floatingName">
+                    <i class="bi bi-person"></i>
+                    Имя
+                </label>
             </div>
 
             <!-- Телефон -->
             <div class="form-floating mt-3" @click="show_map">
                 <input type="tel" class="form-control" id="floatingPhone" placeholder="Телефон">
-                <label for="floatingPhone">Телефон</label>
+                <label for="floatingPhone">
+                    <i class="bi bi-telephone"></i>
+                    Телефон
+                </label>
             </div>
 
             <!-- Email -->
             <div class="form-floating mt-3" @click="show_map">
                 <input type="email" class="form-control" id="floatingEmail" placeholder="email">
-                <label for="floatingEmail">Email</label>
-            </div>
-
-            <!-- Отправить -->
-            <div class="d-grid mt-3">
-                <button class="btn btn-primary btn-lg">Рассчитать</button>
+                <label for="floatingEmail">
+                    <i class="bi bi-envelope"></i>
+                    Email
+                </label>
             </div>
         </form>
+        <!-- Отправить -->
+        <div class="d-grid mt-3">
+            <button class="btn btn-primary btn-lg">Рассчитать</button>
+        </div>
     </div>
 
     <div class="order_form__right" :class="{ order_form__right_active: visible }" v-show="visible">
@@ -133,81 +136,61 @@
                 this.visible = false
             },
             init() {
-                // Стоимость за километр.
-                const DELIVERY_TARIFF = 20,
-                    // Минимальная стоимость.
-                    MINIMUM_COST = 500,
-                    myMap = new ymaps.Map('map', {
-                        center: [60.906882, 30.067233],
-                        zoom: 9,
-                        controls: []
-                    });
 
-                    // Создадим панель маршрутизации.
-                    routePanelControl = new ymaps.control.RoutePanel({
-                        options: {
-                            // Добавим заголовок панели.
-                            showHeader: true,
-                            title: 'Расчёт доставки'
-                        }
-                    });
+                const myMap = new ymaps.Map('map', {
+                    center: [60.906882, 30.067233],
+                    zoom: 9,
+                    controls: []
+                });
 
-                    const zoomControl = new ymaps.control.ZoomControl({
-                        options: {
-                            size: 'small',
-                            float: 'none',
-                            position: {
-                                bottom: 145,
-                                right: 10
-                            }
-                        }
-                    });
+                // Скрыть панель маршрутизации.
+                routePanelControl = new ymaps.control.RoutePanel({
+                    options: {
+                        visible: false,
+                    },
+                });
+
+                const zoomControl = new ymaps.control.ZoomControl({
+                    options: {
+                        size: "small",
+                        float: "none",
+                        position: {
+                            bottom: 145,
+                            right: 10,
+                        },
+                    },
+                });
 
                 // Пользователь сможет построить только автомобильный маршрут.
                 routePanelControl.routePanel.options.set({
                     types: {auto: true}
                 });
 
-                // Если вы хотите задать неизменяемую точку "откуда", раскомментируйте код ниже.
-                /*routePanelControl.routePanel.state.set({
-                    fromEnabled: false,
-                    from: 'Москва, Льва Толстого 16'
-                 });*/
-
-                myMap.controls.add(routePanelControl).add(zoomControl);
-
-                // Получим ссылку на маршрут.
-                routePanelControl.routePanel.getRouteAsync().then(function (route) {
-
-                    // Зададим максимально допустимое число маршрутов, возвращаемых мультимаршрутизатором.
-                    route.model.setParams({results: 1}, true);
-
-                    // Повесим обработчик на событие построения маршрута.
-                    route.model.events.add('requestsuccess', function () {
-
-                        var activeRoute = route.getActiveRoute();
-                        if (activeRoute) {
-                            // Получим протяженность маршрута.
-                            var length = route.getActiveRoute().properties.get("distance"),
-                                // Вычислим стоимость доставки.
-                                price = calculate(Math.round(length.value / 1000)),
-                                // Создадим макет содержимого балуна маршрута.
-                                balloonContentLayout = ymaps.templateLayoutFactory.createClass(
-                                    '<span>Расстояние: ' + length.text + '.</span><br/>' +
-                                    '<span style="font-weight: bold; font-style: italic">Стоимость доставки: ' + price + ' р.</span>');
-                            // Зададим этот макет для содержимого балуна.
-                            route.options.set('routeBalloonContentLayout', balloonContentLayout);
-                            // Откроем балун.
-                            activeRoute.balloon.open();
-                        }
-                    });
-
+                // Пустые точки откуда/куда
+                routePanelControl.routePanel.state.set({
+                    from: "Москва",
+                    to: "",
                 });
 
-                // Функция, вычисляющая стоимость доставки.
-                function calculate(routeLength) {
-                    return Math.max(routeLength * DELIVERY_TARIFF, MINIMUM_COST);
-                }
+                // Кнопки + / - на карте
+                myMap.controls.add(routePanelControl).add(zoomControl);
+
+
+                // Откуда/Куда
+                const floatingFrom = new ymaps.SuggestView("point_from");
+                const floatingTo = new ymaps.SuggestView("point_to");
+
+                floatingFrom.events.add("select", function (e) {
+                    routePanelControl.routePanel.state.set({
+                        from: e.get("item").displayName,
+                    });
+                });
+
+                floatingTo.events.add("select", function (e) {
+                    routePanelControl.routePanel.state.set({
+                        to: e.get("item").displayName,
+                    });
+                });
             }
         },
         mounted() {
