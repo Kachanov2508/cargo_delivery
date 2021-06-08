@@ -6,6 +6,6 @@ register = template.Library()
 
 
 @register.inclusion_tag('menu/menu.html')
-def show_menu():
+def show_menu(user):
     context = Menu.objects.all()
-    return {'context': context}
+    return {'context': context, 'user': user}

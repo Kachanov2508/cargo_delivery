@@ -33,3 +33,12 @@ def user_login(request):
     else:
         form = UserLoginForm()
     return render(request, 'users/login.html', {'form': form})
+
+
+def user_profile(request):
+    return render(request, 'users/profile.html')
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')

@@ -1,6 +1,15 @@
 <style>
-    .nav-link:not(:last-child) {
-        border-right: 1px solid #f7f7f7;
+    .profile__link {
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        color: rgba(204, 204, 204, 0.5);
+    }
+
+    .profile__link span {
+        margin-right: 5px;
     }
 </style>
 
@@ -15,17 +24,25 @@
             <ul class="navbar-nav">
                 {% for item in context %}
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ item.link }}">{{ item.title|upper }}</a>
+                        <a class="nav-link active mx-2" aria-current="page"
+                           href="{{ item.link }}">{{ item.title|upper }}</a>
                     </li>
                 {% endfor %}
+
+                <li class="nav-item">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="nav-link active mx-2 profile__link">
+                            <span class="material-icons"> account_circle </span> {{ user.username }}
+                        </a>
+                    {% else %}
+                        <div style="display: flex">
+                            <a href="{% url 'register' %}" class="nav-link">Регистрация</a>
+                            <a href="{% url 'login' %}" class="nav-link">Вход</a>
+                        </div>
+                    {% endif %}
+                </li>
+
             </ul>
         </div>
-        <span class="navbar-text">
-            {% if request.user.is_authenticated %}
-                Добро пожаловать, {{ user.username }}
-            {% else %}
-                <a href="{% url 'register' %}">Регистрация</a> | <a href="{% url 'login' %}">Логин</a>
-            {% endif %}
-        </span>
     </div>
 </nav>

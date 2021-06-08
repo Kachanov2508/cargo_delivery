@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div style="text-align: right">
+        <a href="{% url 'logout' %}">Выйти</a>
+    </div>
+    <h1>Личный кабинет</h1>
+    <p>Логин: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Имя: {{ user.first_name }}</p>
+    <p>Фамилия: {{ user.last_name }}</p>
+{% endblock %}
