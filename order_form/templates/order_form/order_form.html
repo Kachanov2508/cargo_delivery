@@ -14,23 +14,20 @@
 
         display: grid;
         column-gap: 20px;
-        {#grid-template-columns: repeat(auto-fit, minmax(306px, 1fr));#}
-        grid-template-columns: 306px 1fr 306px;
+    {#grid-template-columns: repeat(auto-fit, minmax(306px, 1fr));#} grid-template-columns: 300px minmax(200px, 1fr) 300px;
+        grid-template-areas: "order_form__left order_form__center order_form__right";
 
-        width: 67.5vw;
+    {#width: 67.5vw;#} width: 1300px;
         box-shadow: 0 0 0 17px rgba(0, 0, 0, 0.3);
     }
 
-    @media (max-width: 740px) {
-        .order_form__active {
-            width: 80vw;
-        }
-    }
-
     .order_form__left {
+        grid-area: order_form__left;
     }
 
     .order_form__center {
+        grid-area: order_form__center;
+
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -41,6 +38,17 @@
     }
 
     .order_form__right {
+        grid-area: order_form__right;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    .order_form__itogo {
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        font-size: 24px;
     }
 
     .order_form__close {
@@ -82,7 +90,57 @@
 
     #map {
         width: 100%;
-        height: 200px;
+        height: 250px;
+    }
+
+
+    @media (max-width: 1399px) {
+        .order_form__active {
+            width: 1100px;
+        }
+    }
+    @media (max-width: 1199px) {
+        .order_form__active {
+            width: 920px;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+    }
+    @media (max-width: 991px) {
+        .order_form__active {
+            width: 680px;
+            grid-template-columns: 1fr;
+            grid-template-rows: max-content 1fr max-content;
+            grid-template-areas: "order_form__left" "order_form__center" "order_form__right";
+        }
+
+        .order_form__left, .order_form__center {
+            border: none;
+            margin-bottom: 30px;
+            padding: 0;
+        }
+
+        #map {
+            height: 300px;
+        }
+    }
+    @media (max-width: 767px) {
+        .order_form__active {
+            width: 500px;
+        }
+
+        #map {
+            width: 460px;
+        }
+    }
+    @media (max-width: 575px) {
+        .order_form__active {
+            width: 100%;
+        }
+
+        #map {
+            margin: 0 auto;
+            width: 100%;
+        }
     }
 
 </style>
@@ -90,44 +148,44 @@
 <div id="order_form">
     <!-- Рассчет доставки -->
     <div class="order_form" :class="{order_form__active: visible}">
-        <div class="order_form__left mb-5">
+        <div class="order_form__left">
             <h5>Шаг 1: Маршрут и груз</h5>
             <form method="post">
                 {% csrf_token %}
                 <!-- Откуда -->
-                <div class="form-floating" @click="show_map">
+                <div class="form-floating mt-4" @click="show_map">
                     <input type="text" class="form-control" id="point_from" placeholder="Имя">
                     <label for="point_from">
                         <i class="bi bi-geo-alt"></i>
-                        Откуда
+                        Откуда забираем
                     </label>
                 </div>
                 <!-- Куда -->
-                <div class="form-floating mt-3" @click="show_map">
+                <div class="form-floating mt-4" @click="show_map">
                     <input type="text" class="form-control" id="point_to" placeholder="Имя">
                     <label for="point_to">
                         <i class="bi bi-geo-alt"></i>
-                        Куда
+                        Куда доставляем
                     </label>
                 </div>
                 <!-- Вес -->
-                <div class="form-floating mt-3" @click="show_map">
+                <div class="form-floating mt-4" @click="show_map">
                     <input type="text" class="form-control" id="floatingWeight" placeholder="Вес">
                     <label for="floatingWeight">
-                        <i class="bi bi-geo-alt"></i>
+                        <i class="bi bi-minecart-loaded"></i>
                         Вес груза
                     </label>
                 </div>
                 <!-- Объем -->
-                <div class="form-floating mt-3" @click="show_map">
+                <div class="form-floating mt-4" @click="show_map">
                     <input type="text" class="form-control" id="floatingVolume" placeholder="Объем">
                     <label for="floatingVolume">
-                        <i class="bi bi-geo-alt"></i>
+                        <i class="bi bi-minecart-loaded"></i>
                         Объем груза
                     </label>
                 </div>
                 <!-- Дата отправки -->
-                <div class="form-floating mt-3" @click="show_map">
+                <div class="form-floating mt-4" @click="show_map">
                     <input type="date" class="form-control" id="floatingDate" placeholder="Дата" autocomplete="off">
                     <label for="floatingDate">
                         <i class="bi bi-calendar"></i>
@@ -136,8 +194,8 @@
                 </div>
             </form>
         </div>
-        <div class="order_form__center mb-5" v-show="visible">
-            <h5>Шаг 2: Информация и расчет</h5>
+        <div class="order_form__center" v-show="visible">
+            <h5>Шаг 2: Информация по маршруту</h5>
             <!-- Расчет -->
             <div class="order_form__calculation">
                 <span class="order_form__text">Всего километров:</span>
@@ -155,12 +213,12 @@
                 <span class="order_form__total">10</span>
             </div>
             <!-- Яндекс карта -->
-            <div id="map"></div>
+            <div id="map" class="mt-3"></div>
         </div>
-        <div class="order_form__right mb-5" v-show="visible">
+        <div class="order_form__right" v-show="visible">
             <h5>Шаг 3: Оформить заказ</h5>
             <!-- Имя -->
-            <div class="form-floating mt-3" @click="show_map">
+            <div class="form-floating mt-4" @click="show_map">
                 <input type="text" class="form-control" id="floatingName" placeholder="Имя" autocomplete="off">
                 <label for="floatingName">
                     <i class="bi bi-person"></i>
@@ -168,7 +226,7 @@
                 </label>
             </div>
             <!-- Телефон -->
-            <div class="form-floating mt-3" @click="show_map">
+            <div class="form-floating mt-4" @click="show_map">
                 <input type="tel" class="form-control" id="floatingPhone" placeholder="Телефон" autocomplete="off">
                 <label for="floatingPhone">
                     <i class="bi bi-telephone"></i>
@@ -176,16 +234,25 @@
                 </label>
             </div>
             <!-- Email -->
-            <div class="form-floating mt-3" @click="show_map">
+            <div class="form-floating mt-4" @click="show_map">
                 <input type="email" class="form-control" id="floatingEmail" placeholder="email" autocomplete="off">
                 <label for="floatingEmail">
                     <i class="bi bi-envelope"></i>
                     Email
                 </label>
             </div>
+            <!-- Итого -->
+            <div class="order_form__itogo my-4">
+                <span class="order_form__text">Итого:</span>
+                <span class="order_form__dashed_line"></span>
+                <span class="order_form__total">2750 руб.</span>
+            </div>
             <!-- Отправить -->
-            <div class="d-grid mt-3">
-                <button class="btn btn-primary btn-lg">Рассчитать</button>
+            <div class="order_form__send_btn d-grid">
+                <button class="btn btn-primary btn-lg">
+                    <i class="bi bi-truck"></i>
+                    Доставить
+                </button>
             </div>
             <!-- Кнопка закрыть -->
             <div class="order_form__close" @click="close_map">
