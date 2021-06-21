@@ -1,0 +1,14 @@
+<footer style="background-color: #232323; color: #f7f7f7; padding: 15px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <span>{{ company }}</span>
+            </div>
+            <div class="col-md-7">
+                {% for item in context %}
+                    <img src="{{ item.icon.url }}" alt="{{ item.title }}">
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</footer>

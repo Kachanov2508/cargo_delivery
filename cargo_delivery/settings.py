@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'slider.apps.SliderConfig',
     'header.apps.HeaderConfig',
     'order_form.apps.OrderFormConfig',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [

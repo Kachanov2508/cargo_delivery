@@ -1,5 +1,5 @@
 from django import template
-from menu.models import Menu
+from menu.models import Menu, Footer
 
 
 register = template.Library()
@@ -9,3 +9,9 @@ register = template.Library()
 def show_menu(user):
     context = Menu.objects.all()
     return {'context': context, 'user': user}
+
+
+@register.inclusion_tag('footer/footer.html')
+def show_footer():
+    context = Footer.objects.all()
+    return {'company': '© 2021  ГК «ОМЕГА»', 'context': context}
